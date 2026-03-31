@@ -3,7 +3,8 @@ package com.team.todolist.todo.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
-import com.team.todolist.todo.controller.ApiResponse;
+
+import com.team.todolist.common.response.ApiResponse;
 import com.team.todolist.todo.dto.TodoRequestDto;
 import com.team.todolist.todo.dto.TodoResponseDto;
 import com.team.todolist.todo.dto.TodoUpdateDto;
