@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원가입 - TodoList</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="page-center">
+  <div class="card">
+
+    <!-- 로고 -->
+    <div class="text-center" style="margin-bottom: 32px;">
+      <div style="font-family:'Nunito',sans-serif; font-size:32px; font-weight:800; color:#3D5A80;">
+        Todo<span style="color:#EE6C4D;">List</span>
+      </div>
+      <p style="color:#7A8A9A; font-size:14px; margin-top:6px;">새 계정을 만들어보세요</p>
+    </div>
+
+    <!-- 에러 메시지 -->
+    <div class="alert alert-error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <!-- 회원가입 폼 -->
+    <form th:action="@{/users/join}" method="post">
+
+      <div class="form-group">
+        <label class="form-label" for="email">이메일</label>
+        <input class="form-control"
+               type="email"
+               id="email"
+               name="email"
+               placeholder="example@email.com"
+               required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">비밀번호</label>
+        <input class="form-control"
+               type="password"
+               id="password"
+               name="password"
+               placeholder="비밀번호를 입력하세요"
+               required>
+      </div>
+
+      <!-- CSRF 토큰 -->
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+      <button type="submit" class="btn btn-primary" style="margin-top:8px;">
+        회원가입
+      </button>
+    </form>
+
+    <p class="text-center mt-24" style="font-size:14px; color:#7A8A9A;">
+      이미 계정이 있으신가요?
+      <a class="link" th:href="@{/login}">로그인</a>
+    </p>
+
+  </div>
+</div>
+</body>
+</html>
