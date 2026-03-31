@@ -1,7 +1,8 @@
 package com.team.todolist.config;
 
-import com.team.todolist.security.service.CustomUserDetailsService; //  추가
-import lombok.RequiredArgsConstructor; //  추가
+
+import com.team.todolist.security.service.CustomUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -12,10 +13,12 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableMethodSecurity
-@RequiredArgsConstructor //  추가
+
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CustomUserDetailsService customUserDetailsService; //  추가
+    private final CustomUserDetailsService customUserDetailsService;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -59,7 +62,8 @@ public class SecurityConfig {
                 .clearAuthentication(true)
             )
 
-            //  추가 (핵심)
+
+
             .userDetailsService(customUserDetailsService);
 
         return http.build();
