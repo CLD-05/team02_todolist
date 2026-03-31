@@ -1,4 +1,4 @@
-package com.team.todolist.common.entity;
+ package com.team.todolist.common.entity;
 
 import java.time.LocalDateTime;
 

@@ -1,27 +1,40 @@
 package com.team.todolist.user.controller;
 
-import com.team.todolist.common.response.ApiResponse;
 import com.team.todolist.user.dto.JoinRequestDto;
-import com.team.todolist.user.dto.LoginUserDto;
 import com.team.todolist.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/api/users")
+@Controller
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/join")
-    public ApiResponse<String> join(@Valid @RequestBody JoinRequestDto requestDto) {
-        return ApiResponse.success(userService.join(requestDto));
+    // 로그인 페이지
+    @GetMapping("/login")
+    public String loginForm() {
+        return "login";
     }
 
-    @PostMapping("/login")
-    public ApiResponse<String> login(@Valid @RequestBody LoginUserDto requestDto) {
-        return ApiResponse.success(userService.login(requestDto));
+    // 회원가입 페이지
+    @GetMapping("/users/join")
+    public String joinForm() {
+        return "join";
+    }
+
+    // 회원가입 처리
+    @PostMapping("/users/join")
+    public String join(@Valid @ModelAttribute JoinRequestDto requestDto, Model model) {
+        try {
+            userService.join(requestDto);
+            return "redirect:/login";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "join";
+        }
     }
 }
