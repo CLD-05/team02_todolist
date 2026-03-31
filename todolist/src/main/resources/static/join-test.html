@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 테스트</title>
+</head>
+<body>
+<h1>회원가입 테스트</h1>
+
+<input type="text" id="email" placeholder="이메일">
+<input type="password" id="password" placeholder="비밀번호">
+<input type="text" id="nickname" placeholder="닉네임">
+<button onclick="join()">회원가입</button>
+
+<pre id="result"></pre>
+
+<script>
+async function join() {
+    const body = {
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value,
+        nickname: document.getElementById("nickname").value
+    };
+
+    try {
+        const response = await fetch("/api/users/join", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        });
+
+        const text = await response.text();
+        document.getElementById("result").textContent =
+            "status: " + response.status + "\n\n" + text;
+    } catch (e) {
+        document.getElementById("result").textContent = e.toString();
+    }
+}
+</script>
+</body>
+</html>
