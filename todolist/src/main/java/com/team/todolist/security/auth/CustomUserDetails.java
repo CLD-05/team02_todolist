@@ -20,7 +20,6 @@ public class CustomUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         
-        // user.getRole()이 이제 String("ROLE_USER")을 반환하므로 바로 넣습니다.
         authorities.add(new SimpleGrantedAuthority(user.getRole())); 
         
         return authorities;
