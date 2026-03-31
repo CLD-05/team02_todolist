@@ -6,6 +6,8 @@ import com.team.todolist.todo.dto.TodoResponseDto;
 import com.team.todolist.todo.entity.Todo;
 import com.team.todolist.todo.repository.TodoRepository;
 import com.team.todolist.user.entity.User;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TodoService {
 
     private final TodoRepository todoRepository;
