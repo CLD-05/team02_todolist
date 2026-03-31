@@ -1,43 +1,55 @@
 package com.team.todolist.todo.controller;
 
+import java.util.List;
+
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.team.todolist.common.response.ApiResponse;
+import com.team.todolist.security.auth.CustomUserDetails;
+import com.team.todolist.todo.dto.TodoRequestDto;
+import com.team.todolist.todo.dto.TodoResponseDto;
 import com.team.todolist.todo.service.TodoService;
 import com.team.todolist.user.entity.User;
-import com.team.todolist.user.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
 
-@Controller
+import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
+@RestController
+@RequestMapping("/todos")
 public class TodoController {
 
-    private final TodoService todoService;
-    private final UserRepository userRepository;
+	private final TodoService todoService;
+	
+	@PostMapping
+	public ApiResponse<TodoResponseDto> createTodo(
+	        @AuthenticationPrincipal CustomUserDetails userDetails,
+	        @RequestBody TodoRequestDto requestDto
+	) {
+	    User user = null;
 
-    //Todo 목록
-    @GetMapping("/todos")
-    public String todos(Model model, Authentication authentication) {
+	    if (userDetails != null) {
+	        user = userDetails.getUser();
+	    }
 
-        String email = authentication.getName(); // 로그인 유저
-        User user = userRepository.findByEmail(email).orElseThrow();
+	    TodoResponseDto response = todoService.createTodo(user, requestDto);
+	    return ApiResponse.success("일정 생성 성공", response);
+	}
+	
+	@GetMapping
+	public ApiResponse<List<TodoResponseDto>> getTodos(
+	        @AuthenticationPrincipal CustomUserDetails userDetails
+	) {
+	    User user = null;
 
-        model.addAttribute("todos", todoService.getTodos(user));
+	    if (userDetails != null) {
+	        user = userDetails.getUser();
+	    }
 
-        return "todos";
-    }
-
-    //Todo 생성
-    @PostMapping("/todos/new")
-    public String create(@RequestParam String content,
-                         Authentication authentication) {
-
-        String email = authentication.getName();
-        User user = userRepository.findByEmail(email).orElseThrow();
-
-        todoService.create(content, user);
-
-        return "redirect:/todos";
-    }
+	    List<TodoResponseDto> response = todoService.getTodos(user);
+	    return ApiResponse.success("일정 목록 조회 성공", response);
+	}
 }
