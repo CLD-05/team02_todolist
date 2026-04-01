@@ -25,6 +25,7 @@ public class TodoController {
 
     private final TodoService todoService;
 
+
     // 전체 일정 조회
     @GetMapping
     public String todoList(
@@ -34,6 +35,7 @@ public class TodoController {
         User user = userDetails.getUser();
         List<TodoResponseDto> todos = todoService.getTodos(user);
 
+        // 🔥 진행중 / 완료 분리
         List<TodoResponseDto> activeTodos = todos.stream()
                 .filter(todo -> todo.getStatus() != TodoStatus.COMPLETED)
                 .toList();
@@ -41,6 +43,7 @@ public class TodoController {
         List<TodoResponseDto> completedTodos = todos.stream()
                 .filter(todo -> todo.getStatus() == TodoStatus.COMPLETED)
                 .toList();
+
 
         // 진행률 계산 (0으로 나누기 방지)
         int total = todos.size();
@@ -74,6 +77,7 @@ public class TodoController {
         User user = userDetails.getUser();
         TodoRequestDto requestDto = new TodoRequestDto(content);
         todoService.createTodo(user, requestDto);
+
         redirectAttributes.addFlashAttribute("successMessage", "할 일이 추가되었습니다!");
         return "redirect:/todos";
     }
@@ -87,6 +91,7 @@ public class TodoController {
     ) {
         User user = userDetails.getUser();
         TodoResponseDto todo = todoService.getTodo(id, user);
+
         model.addAttribute("todo", todo);
         return "todo-form";
     }
@@ -102,7 +107,9 @@ public class TodoController {
     ) {
         User user = userDetails.getUser();
         TodoUpdateDto requestDto = new TodoUpdateDto(content, status);
+
         todoService.updateTodo(id, user, requestDto);
+
         redirectAttributes.addFlashAttribute("successMessage", "할 일이 수정되었습니다!");
         return "redirect:/todos";
     }
@@ -116,7 +123,9 @@ public class TodoController {
     ) {
         User user = userDetails.getUser();
         TodoUpdateDto requestDto = new TodoUpdateDto(null, status);
+
         todoService.updateTodo(id, user, requestDto);
+
         return "redirect:/todos";
     }
 
@@ -129,6 +138,7 @@ public class TodoController {
     ) {
         User user = userDetails.getUser();
         todoService.deleteTodo(id, user);
+
         redirectAttributes.addFlashAttribute("successMessage", "할 일이 삭제되었습니다!");
         return "redirect:/todos";
     }

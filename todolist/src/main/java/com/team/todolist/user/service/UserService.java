@@ -29,7 +29,7 @@ public class UserService {
                 .email(requestDto.getEmail())
                 .password(passwordEncoder.encode(requestDto.getPassword()))
                 .role("ROLE_USER")
-                .nickname(requestDto.getNickname()) // 닉네임 저장
+                .nickname(requestDto.getNickname())
                 .build();
 
         userRepository.save(user);

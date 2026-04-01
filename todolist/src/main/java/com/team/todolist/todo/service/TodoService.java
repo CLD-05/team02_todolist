@@ -28,6 +28,7 @@ public class TodoService {
         return new TodoResponseDto(savedTodo);
     }
 
+
     // 내 일정 전체 조회
     public List<TodoResponseDto> getTodos(User user) {
         return todoRepository.findAllByUser(user).stream()
@@ -51,12 +52,14 @@ public class TodoService {
         if (requestDto.getContent() != null) {
             todo.updateContent(requestDto.getContent());
         }
+
         if (requestDto.getStatus() != null) {
             todo.updateStatus(requestDto.getStatus());
         }
 
         return new TodoResponseDto(todo);
     }
+
 
     // 일정 삭제 (권한 검증 포함)
     @Transactional
