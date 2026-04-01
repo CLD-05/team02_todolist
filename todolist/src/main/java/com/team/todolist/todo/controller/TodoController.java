@@ -1,106 +1,125 @@
 package com.team.todolist.todo.controller;
- 
+
 import java.util.List;
- 
+
 import com.team.todolist.security.auth.CustomUserDetails;
+import com.team.todolist.todo.dto.TodoUpdateDto;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
- 
 import com.team.todolist.todo.dto.TodoRequestDto;
 import com.team.todolist.todo.dto.TodoResponseDto;
-import com.team.todolist.todo.dto.TodoUpdateDto;
-import com.team.todolist.todo.entity.TodoStatus;
 import com.team.todolist.todo.service.TodoService;
 import com.team.todolist.user.entity.User;
- 
+
 import lombok.RequiredArgsConstructor;
- 
+
 @Controller
 @RequestMapping("/todos")
 @RequiredArgsConstructor
 public class TodoController {
- 
+
     private final TodoService todoService;
- 
-    // ── 목록 페이지: todo-list.html ──────────────────────────────
+
+    // 전체 일정 조회 (목록 페이지)
     @GetMapping
-    public String todoList(
+    public String getTodos(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             Model model
     ) {
         User user = userDetails.getUser();
         List<TodoResponseDto> todos = todoService.getTodos(user);
+
+        // 완료 개수 계산해서 model에 추가
+        long completedCount = todos.stream()
+                .filter(t -> t.getStatus().name().equals("COMPLETED"))
+                .count();
+
         model.addAttribute("todos", todos);
+        model.addAttribute("completedCount", completedCount);
         return "todo-list";
     }
- 
-    // ── 추가 폼 페이지: todo-form.html ────────────────────────────
+
+    // 새 할 일 작성 페이지
     @GetMapping("/new")
     public String newTodoForm() {
         return "todo-form";
     }
- 
-    // ── 추가 처리 ─────────────────────────────────────────────────
+
+    // 할 일 생성
     @PostMapping
     public String createTodo(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestParam String content,
+            @ModelAttribute TodoRequestDto requestDto,
             RedirectAttributes redirectAttributes
     ) {
         User user = userDetails.getUser();
-        TodoRequestDto requestDto = new TodoRequestDto(content);
         todoService.createTodo(user, requestDto);
         redirectAttributes.addFlashAttribute("successMessage", "할 일이 추가되었습니다!");
         return "redirect:/todos";
     }
- 
-    // ── 수정 폼 페이지: todo-form.html (todo 객체 전달) ───────────
-    @GetMapping("/{id}/edit")
-    public String editTodoForm(
-            @PathVariable Long id,
-            Model model
-    ) {
-        TodoResponseDto todo = todoService.getTodo(id);
+
+    // 수정 페이지
+    @GetMapping("/{todoId}/edit")
+    public String editTodoForm(@PathVariable Long todoId, Model model) {
+        TodoResponseDto todo = todoService.getTodo(todoId);
         model.addAttribute("todo", todo);
         return "todo-form";
     }
- 
-    // ── 수정 처리 ─────────────────────────────────────────────────
-    @PostMapping("/{id}/edit")
+
+    // 할 일 수정
+    @PostMapping("/{todoId}/edit")
     public String updateTodo(
-            @PathVariable Long id,
-            @RequestParam String content,
-            @RequestParam TodoStatus status,
+            @PathVariable Long todoId,
+            @ModelAttribute TodoUpdateDto requestDto,
             RedirectAttributes redirectAttributes
     ) {
-        TodoUpdateDto requestDto = new TodoUpdateDto(content, status);
-        todoService.updateTodo(id, requestDto);
+        todoService.updateTodo(todoId, requestDto);
         redirectAttributes.addFlashAttribute("successMessage", "할 일이 수정되었습니다!");
         return "redirect:/todos";
     }
- 
-    // ── 상태 변경 (체크박스 버튼) ─────────────────────────────────
-    @PostMapping("/{id}/status")
+
+    // 체크박스 상태 토글
+    @PostMapping("/{todoId}/status")
     public String updateStatus(
-            @PathVariable Long id,
-            @RequestParam TodoStatus status
+            @PathVariable Long todoId,
+            @RequestParam String status
     ) {
-        TodoUpdateDto requestDto = new TodoUpdateDto(null, status);
-        todoService.updateTodo(id, requestDto);
+        TodoUpdateDto dto = new TodoUpdateDto();
+        dto.setStatus(com.team.todolist.todo.entity.TodoStatus.valueOf(status));
+        todoService.updateTodo(todoId, dto);
         return "redirect:/todos";
     }
- 
-    // ── 삭제 처리 ─────────────────────────────────────────────────
-    @PostMapping("/{id}/delete")
+
+    // 할 일 삭제
+    @PostMapping("/{todoId}/delete")
     public String deleteTodo(
-            @PathVariable Long id,
+            @PathVariable Long todoId,
             RedirectAttributes redirectAttributes
     ) {
-        todoService.deleteTodo(id);
+        todoService.deleteTodo(todoId);
         redirectAttributes.addFlashAttribute("successMessage", "할 일이 삭제되었습니다!");
+        return "redirect:/todos";
+    }
+
+    // 완료된 할 일 일괄 삭제
+    @PostMapping("/delete-completed")
+    public String deleteCompleted(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            RedirectAttributes redirectAttributes
+    ) {
+        User user = userDetails.getUser();
+        int count = todoService.deleteCompletedTodos(user);
+
+        if (count > 0) {
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "완료된 할 일 " + count + "개가 삭제되었습니다!");
+        } else {
+            redirectAttributes.addFlashAttribute("successMessage",
+                    "삭제할 완료 항목이 없습니다.");
+        }
         return "redirect:/todos";
     }
 }

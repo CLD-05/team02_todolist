@@ -4,6 +4,7 @@ import com.team.todolist.todo.dto.TodoUpdateDto;
 import com.team.todolist.todo.dto.TodoRequestDto;
 import com.team.todolist.todo.dto.TodoResponseDto;
 import com.team.todolist.todo.entity.Todo;
+import com.team.todolist.todo.entity.TodoStatus;
 import com.team.todolist.todo.repository.TodoRepository;
 import com.team.todolist.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -63,5 +64,18 @@ public class TodoService {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
         todoRepository.delete(todo);
+    }
+
+    // 완료된 일정 일괄 삭제
+    @Transactional
+    public int deleteCompletedTodos(User user) {
+        // 삭제 전 완료 개수 먼저 조회
+        List<TodoResponseDto> todos = getTodos(user);
+        int count = (int) todos.stream()
+                .filter(t -> t.getStatus().name().equals("COMPLETED"))
+                .count();
+
+        todoRepository.deleteAllByUserAndStatus(user, TodoStatus.COMPLETED);
+        return count;
     }
 }
