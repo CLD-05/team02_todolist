@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<<<<<<< HEAD
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
@@ -62,47 +61,3 @@
 </div>
 </body>
 </html>
-=======
-<html>
-<head>
-    <title>회원가입</title>
-</head>
-<body>
-
-<h2>회원가입</h2>
-
-<form id="joinForm">
-    <div>
-        <input type="text" id="email" placeholder="이메일">
-    </div>
-    <div>
-        <input type="password" id="password" placeholder="비밀번호">
-    </div>
-    <button type="submit">가입</button>
-</form>
-
-<script>
-document.getElementById("joinForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    fetch("/api/users/join", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            email: document.getElementById("email").value,
-            password: document.getElementById("password").value
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        alert(data.message);
-        location.href = "/login";
-    });
-});
-</script>
-
-</body>
-</html>
->>>>>>> develop

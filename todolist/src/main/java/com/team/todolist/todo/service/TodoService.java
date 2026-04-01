@@ -6,31 +6,27 @@ import com.team.todolist.todo.dto.TodoResponseDto;
 import com.team.todolist.todo.entity.Todo;
 import com.team.todolist.todo.repository.TodoRepository;
 import com.team.todolist.user.entity.User;
-
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class TodoService {
 
     private final TodoRepository todoRepository;
 
     // 일정 생성
+    @Transactional
     public TodoResponseDto createTodo(User user, TodoRequestDto requestDto) {
-        Todo todo = new Todo(
-                user,
-                requestDto.getContent()
-        );
-
+        Todo todo = new Todo(user, requestDto.getContent());
         Todo savedTodo = todoRepository.save(todo);
         return new TodoResponseDto(savedTodo);
     }
+
     // 내 일정 전체 조회
     public List<TodoResponseDto> getTodos(User user) {
         return todoRepository.findAllByUser(user).stream()
@@ -42,21 +38,18 @@ public class TodoService {
     public TodoResponseDto getTodo(Long todoId) {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
-
         return new TodoResponseDto(todo);
     }
 
     // 일정 수정
+    @Transactional
     public TodoResponseDto updateTodo(Long todoId, TodoUpdateDto requestDto) {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
 
-        // content 수정 (값 있을 때만)
         if (requestDto.getContent() != null) {
             todo.updateContent(requestDto.getContent());
         }
-
-        // status 수정 (값 있을 때만)
         if (requestDto.getStatus() != null) {
             todo.updateStatus(requestDto.getStatus());
         }
@@ -65,10 +58,10 @@ public class TodoService {
     }
 
     // 일정 삭제
+    @Transactional
     public void deleteTodo(Long todoId) {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
-
         todoRepository.delete(todo);
     }
 }
