@@ -25,6 +25,7 @@ public class TodoController {
 
     private final TodoService todoService;
 
+    // 목록 (진행률 + active/completed 분리)
     @GetMapping
     public String todoList(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -33,6 +34,7 @@ public class TodoController {
         User user = userDetails.getUser();
         List<TodoResponseDto> todos = todoService.getTodos(user);
 
+        // 🔥 진행중 / 완료 분리
         List<TodoResponseDto> activeTodos = todos.stream()
                 .filter(todo -> todo.getStatus() != TodoStatus.COMPLETED)
                 .toList();
@@ -41,9 +43,14 @@ public class TodoController {
                 .filter(todo -> todo.getStatus() == TodoStatus.COMPLETED)
                 .toList();
 
+        // 🔥 진행률 계산
+        int progress = todoService.getTodayProgress(user);
+
         model.addAttribute("activeTodos", activeTodos);
         model.addAttribute("completedTodos", completedTodos);
         model.addAttribute("totalCount", todos.size());
+
+        model.addAttribute("progress", progress);
 
         return "todo-list";
     }
@@ -62,6 +69,7 @@ public class TodoController {
         User user = userDetails.getUser();
         TodoRequestDto requestDto = new TodoRequestDto(content);
         todoService.createTodo(user, requestDto);
+
         redirectAttributes.addFlashAttribute("successMessage", "할 일이 추가되었습니다!");
         return "redirect:/todos";
     }
@@ -74,6 +82,7 @@ public class TodoController {
     ) {
         User user = userDetails.getUser();
         TodoResponseDto todo = todoService.getTodo(id, user);
+
         model.addAttribute("todo", todo);
         return "todo-form";
     }
@@ -88,7 +97,9 @@ public class TodoController {
     ) {
         User user = userDetails.getUser();
         TodoUpdateDto requestDto = new TodoUpdateDto(content, status);
+
         todoService.updateTodo(id, user, requestDto);
+
         redirectAttributes.addFlashAttribute("successMessage", "할 일이 수정되었습니다!");
         return "redirect:/todos";
     }
@@ -101,7 +112,9 @@ public class TodoController {
     ) {
         User user = userDetails.getUser();
         TodoUpdateDto requestDto = new TodoUpdateDto(null, status);
+
         todoService.updateTodo(id, user, requestDto);
+
         return "redirect:/todos";
     }
 
@@ -113,6 +126,7 @@ public class TodoController {
     ) {
         User user = userDetails.getUser();
         todoService.deleteTodo(id, user);
+
         redirectAttributes.addFlashAttribute("successMessage", "할 일이 삭제되었습니다!");
         return "redirect:/todos";
     }
