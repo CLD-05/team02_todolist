@@ -61,9 +61,11 @@ public class TodoController {
     @GetMapping("/{id}/edit")
     public String editTodoForm(
             @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             Model model
     ) {
-        TodoResponseDto todo = todoService.getTodo(id);
+    	User user = userDetails.getUser();
+        TodoResponseDto todo = todoService.getTodo(id, user);
         model.addAttribute("todo", todo);
         return "todo-form";
     }
@@ -72,12 +74,14 @@ public class TodoController {
     @PostMapping("/{id}/edit")
     public String updateTodo(
             @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam String content,
             @RequestParam TodoStatus status,
             RedirectAttributes redirectAttributes
     ) {
+    	User user = userDetails.getUser();
         TodoUpdateDto requestDto = new TodoUpdateDto(content, status);
-        todoService.updateTodo(id, requestDto);
+        todoService.updateTodo(id, user, requestDto);
         redirectAttributes.addFlashAttribute("successMessage", "할 일이 수정되었습니다!");
         return "redirect:/todos";
     }
@@ -86,10 +90,12 @@ public class TodoController {
     @PostMapping("/{id}/status")
     public String updateStatus(
             @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam TodoStatus status
     ) {
+    	User user = userDetails.getUser();
         TodoUpdateDto requestDto = new TodoUpdateDto(null, status);
-        todoService.updateTodo(id, requestDto);
+        todoService.updateTodo(id, user, requestDto);
         return "redirect:/todos";
     }
  
@@ -97,9 +103,11 @@ public class TodoController {
     @PostMapping("/{id}/delete")
     public String deleteTodo(
             @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             RedirectAttributes redirectAttributes
     ) {
-        todoService.deleteTodo(id);
+    	User user = userDetails.getUser();
+        todoService.deleteTodo(id,user);
         redirectAttributes.addFlashAttribute("successMessage", "할 일이 삭제되었습니다!");
         return "redirect:/todos";
     }
