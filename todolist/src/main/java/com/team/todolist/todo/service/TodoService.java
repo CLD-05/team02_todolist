@@ -35,17 +35,17 @@ public class TodoService {
     }
 
     // 일정 단건 조회
-    public TodoResponseDto getTodo(Long todoId) {
-        Todo todo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
+    public TodoResponseDto getTodo(Long todoId,User user) {
+        Todo todo = todoRepository.findByIdAndUser(todoId, user)
+                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 없거나 접근 권한이 없습니다."));
         return new TodoResponseDto(todo);
     }
 
     // 일정 수정
     @Transactional
-    public TodoResponseDto updateTodo(Long todoId, TodoUpdateDto requestDto) {
-        Todo todo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
+    public TodoResponseDto updateTodo(Long todoId, User user, TodoUpdateDto requestDto) {
+        Todo todo = todoRepository.findByIdAndUser(todoId, user)
+                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 없거나 접근 권한이 없습니다."));
 
         if (requestDto.getContent() != null) {
             todo.updateContent(requestDto.getContent());
@@ -59,9 +59,9 @@ public class TodoService {
 
     // 일정 삭제
     @Transactional
-    public void deleteTodo(Long todoId) {
-        Todo todo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
+    public void deleteTodo(Long todoId,User user) {
+        Todo todo = todoRepository.findByIdAndUser(todoId, user)
+                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 없거나 접근 권한이 없습니다."));
         todoRepository.delete(todo);
     }
 }
