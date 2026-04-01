@@ -1,8 +1,7 @@
 package com.team.todolist.todo.entity;
 
-import java.time.LocalDateTime;
+import com.team.todolist.common.entity.BaseEntity;
 import com.team.todolist.user.entity.User;
-import jakarta.persistence.Column;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,24 +10,40 @@ import lombok.NoArgsConstructor;
 @Table(name = "todos")
 @Getter
 @NoArgsConstructor
-public class Todo {
+public class Todo extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(nullable = false)
     private String content;
 
-    @Column(name = "is_completed")
-    private Boolean isCompleted;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TodoStatus status;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    public Todo(User user, String content) {
+        if (content == null || content.trim().isEmpty()) {
+            throw new IllegalArgumentException("내용은 비어 있을 수 없습니다.");
+        }
+        this.user = user;
+        this.content = content;
+        this.status = TodoStatus.PENDING;
+    }
 
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    public void updateContent(String content) {
+        if (content == null || content.trim().isEmpty()) {
+            throw new IllegalArgumentException("내용은 비어 있을 수 없습니다.");
+        }
+        this.content = content;
+    }
+
+    public void updateStatus(TodoStatus status) {
+        this.status = status;
+    }
 }

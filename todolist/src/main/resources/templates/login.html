@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로그인 · TodoList</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="page-center">
+  <div class="card">
+
+    <div class="text-center" style="margin-bottom: 32px;">
+      <div style="font-family:'Nunito',sans-serif; font-size:32px; font-weight:800; color:#3D5A80;">
+        Todo<span style="color:#EE6C4D;">List</span>
+      </div>
+      <p style="color:#7A8A9A; font-size:14px; margin-top:6px;">오늘의 할 일을 관리해보세요</p>
+    </div>
+
+    <div class="alert alert-error"   th:if="${param.error}">이메일 또는 비밀번호가 올바르지 않습니다.</div>
+    <div class="alert alert-success" th:if="${param.logout}">로그아웃 되었습니다.</div>
+    <div class="alert alert-success" th:if="${param.joined}">회원가입 완료! 로그인해주세요.</div>
+    <div class="alert alert-success" th:if="${param.deleted}">회원탈퇴가 완료되었습니다.</div>
+
+    <form th:action="@{/login}" method="post">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+      <div class="form-group">
+        <label class="form-label" for="username">이메일</label>
+        <input class="form-control" type="email" id="username" name="username"
+               placeholder="example@email.com" required autofocus>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password">비밀번호</label>
+        <input class="form-control" type="password" id="password" name="password"
+               placeholder="비밀번호를 입력하세요" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="margin-top:8px;">로그인</button>
+    </form>
+
+    <p class="text-center mt-24" style="font-size:14px; color:#7A8A9A;">
+      계정이 없으신가요?
+      <a class="link" th:href="@{/users/join}">회원가입</a>
+    </p>
+
+  </div>
+</div>
+</body>
+</html>
