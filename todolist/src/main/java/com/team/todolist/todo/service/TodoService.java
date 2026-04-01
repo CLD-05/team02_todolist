@@ -27,14 +27,14 @@ public class TodoService {
         return new TodoResponseDto(savedTodo);
     }
 
-    // 내 일정 전체 조회
+    // 전체 조회
     public List<TodoResponseDto> getTodos(User user) {
         return todoRepository.findAllByUser(user).stream()
                 .map(TodoResponseDto::new)
                 .toList();
     }
 
-    // 🔥 오늘 진행률 추가
+    // 🔥 오늘 진행률 (너가 추가한 기능)
     public int getTodayProgress(User user) {
 
         List<Todo> todos = todoRepository.findAllByUser(user);
@@ -50,14 +50,14 @@ public class TodoService {
         return (int) ((completed * 100) / total);
     }
 
-    // 일정 단건 조회
+    // 단건 조회
     public TodoResponseDto getTodo(Long todoId, User user) {
         Todo todo = todoRepository.findByIdAndUser(todoId, user)
                 .orElseThrow(() -> new IllegalArgumentException("해당 일정이 없거나 접근 권한이 없습니다."));
         return new TodoResponseDto(todo);
     }
 
-    // 일정 수정
+    // 수정
     @Transactional
     public TodoResponseDto updateTodo(Long todoId, User user, TodoUpdateDto requestDto) {
         Todo todo = todoRepository.findByIdAndUser(todoId, user)
@@ -66,6 +66,7 @@ public class TodoService {
         if (requestDto.getContent() != null) {
             todo.updateContent(requestDto.getContent());
         }
+
         if (requestDto.getStatus() != null) {
             todo.updateStatus(requestDto.getStatus());
         }
@@ -73,7 +74,7 @@ public class TodoService {
         return new TodoResponseDto(todo);
     }
 
-    // 일정 삭제
+    // 삭제
     @Transactional
     public void deleteTodo(Long todoId, User user) {
         Todo todo = todoRepository.findByIdAndUser(todoId, user)
