@@ -31,6 +31,10 @@ public class Todo {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TodoStatus status;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     // 생성 시간
     @Column(nullable = false, updatable = false)
@@ -41,15 +45,24 @@ public class Todo {
     private LocalDateTime updatedAt;
 
     // 생성용 생성자
+<<<<<<< Updated upstream
     @Builder
     public Todo(User user, String content) {
+=======
+    public Todo(User user, String content, Category category) {
+>>>>>>> Stashed changes
         if (content == null || content.trim().isEmpty()) {
             throw new IllegalArgumentException("내용은 비어 있을 수 없습니다.");
         }
 
         this.user = user;
         this.content = content;
+<<<<<<< Updated upstream
         this.status = TodoStatus.PENDING; // 기본값
+=======
+        this.status = TodoStatus.PENDING;
+        this.category = category;
+>>>>>>> Stashed changes
     }
 
     // 내용 수정

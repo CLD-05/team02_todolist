@@ -8,5 +8,10 @@ import lombok.NoArgsConstructor;
 public class TodoRequestDto {
 
     private String content;
+<<<<<<< Updated upstream
 	
 }
+=======
+    private Long categoryId;
+}
+>>>>>>> Stashed changes

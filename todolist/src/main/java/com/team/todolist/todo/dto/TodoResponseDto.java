@@ -14,6 +14,7 @@ public class TodoResponseDto {
     private TodoStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String categoryName;
 
     public TodoResponseDto(Todo todo) {
         this.id = todo.getId();
@@ -21,5 +22,6 @@ public class TodoResponseDto {
         this.status = todo.getStatus();
         this.createdAt = todo.getCreatedAt();
         this.updatedAt = todo.getUpdatedAt();
+        this.categoryName = (todo.getCategory() != null) ? todo.getCategory().getName() : "미지정";
     }
 }

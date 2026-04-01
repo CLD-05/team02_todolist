@@ -1,5 +1,6 @@
 package com.team.todolist.todo.service;
 
+<<<<<<< Updated upstream
 import com.team.todolist.todo.dto.TodoUpdateDto;
 import com.team.todolist.todo.dto.TodoRequestDto;
 import com.team.todolist.todo.dto.TodoResponseDto;
@@ -9,10 +10,27 @@ import com.team.todolist.user.entity.User;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+=======
+import java.util.List;
+
+>>>>>>> Stashed changes
 import org.springframework.stereotype.Service;
 
+<<<<<<< Updated upstream
 import java.time.LocalDateTime;
 import java.util.List;
+=======
+import com.team.todolist.todo.dto.TodoRequestDto;
+import com.team.todolist.todo.dto.TodoResponseDto;
+import com.team.todolist.todo.dto.TodoUpdateDto;
+import com.team.todolist.todo.entity.Category;
+import com.team.todolist.todo.entity.Todo;
+import com.team.todolist.todo.repository.CategoryRepository;
+import com.team.todolist.todo.repository.TodoRepository;
+import com.team.todolist.user.entity.User;
+
+import lombok.RequiredArgsConstructor;
+>>>>>>> Stashed changes
 
 @Service
 @RequiredArgsConstructor
@@ -20,15 +38,26 @@ import java.util.List;
 public class TodoService {
 
     private final TodoRepository todoRepository;
-
+    private final CategoryRepository categoryRepository;
+    
     // 일정 생성
     public TodoResponseDto createTodo(User user, TodoRequestDto requestDto) {
+<<<<<<< Updated upstream
         Todo todo = new Todo(
                 user,
                 requestDto.getContent()
         );
 
+=======
+
+        Category category = categoryRepository.findById(requestDto.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다."));
+
+        Todo todo = new Todo(user, requestDto.getContent(), category);
+        
+>>>>>>> Stashed changes
         Todo savedTodo = todoRepository.save(todo);
+        
         return new TodoResponseDto(savedTodo);
     }
     // 내 일정 전체 조회
@@ -71,4 +100,13 @@ public class TodoService {
 
         todoRepository.delete(todo);
     }
+<<<<<<< Updated upstream
 }
+=======
+
+	public List<Category> getAllCategories() {
+		// TODO Auto-generated method stub
+		return categoryRepository.findAll();
+	}
+}
+>>>>>>> Stashed changes

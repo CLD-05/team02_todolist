@@ -8,6 +8,11 @@ import com.team.todolist.common.response.ApiResponse;
 import com.team.todolist.todo.dto.TodoRequestDto;
 import com.team.todolist.todo.dto.TodoResponseDto;
 import com.team.todolist.todo.dto.TodoUpdateDto;
+<<<<<<< Updated upstream
+=======
+import com.team.todolist.todo.entity.Category;
+import com.team.todolist.todo.entity.TodoStatus;
+>>>>>>> Stashed changes
 import com.team.todolist.todo.service.TodoService;
 import com.team.todolist.user.entity.User;
 import com.team.todolist.user.repository.UserRepository; // 추가됨
@@ -20,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class TodoController {
 
     private final TodoService todoService;
+<<<<<<< Updated upstream
     private final UserRepository userRepository; // 테스트를 위해 유저 저장소 주입
 
     // 일정 생성
@@ -33,6 +39,42 @@ public class TodoController {
 
         TodoResponseDto response = todoService.createTodo(user, requestDto);
         return ApiResponse.success("일정 생성 성공", response);
+=======
+ 
+    // ── 목록 페이지: todo-list.html ──────────────────────────────
+    @GetMapping
+    public String todoList(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            Model model
+    ) {
+        User user = userDetails.getUser();
+        List<TodoResponseDto> todos = todoService.getTodos(user);
+        model.addAttribute("todos", todos);
+        return "todo-list";
+    }
+ 
+    // ── 추가 폼 페이지: todo-form.html ────────────────────────────
+    @GetMapping("/new")
+    public String newTodoForm(Model model) {
+        List<Category> categories = todoService.getAllCategories(); 
+        model.addAttribute("categories", categories);
+        return "todo-form";
+    }
+ 
+    // ── 추가 처리 ─────────────────────────────────────────────────
+    @PostMapping
+    public String createTodo(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam String content,
+            @RequestParam Long categoryId,
+            RedirectAttributes redirectAttributes
+    ) {
+        User user = userDetails.getUser();
+        TodoRequestDto requestDto = new TodoRequestDto(content, categoryId);
+        todoService.createTodo(user, requestDto);
+        redirectAttributes.addFlashAttribute("successMessage", "할 일이 추가되었습니다!");
+        return "redirect:/todos";
+>>>>>>> Stashed changes
     }
 
     // 전체 일정 조회
