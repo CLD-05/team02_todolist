@@ -4,6 +4,7 @@ import com.team.todolist.todo.dto.TodoUpdateDto;
 import com.team.todolist.todo.dto.TodoRequestDto;
 import com.team.todolist.todo.dto.TodoResponseDto;
 import com.team.todolist.todo.entity.Todo;
+import com.team.todolist.todo.entity.TodoStatus;
 import com.team.todolist.todo.repository.TodoRepository;
 import com.team.todolist.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -27,37 +28,22 @@ public class TodoService {
         return new TodoResponseDto(savedTodo);
     }
 
-    // 전체 조회
+
+    // 내 일정 전체 조회
     public List<TodoResponseDto> getTodos(User user) {
         return todoRepository.findAllByUser(user).stream()
                 .map(TodoResponseDto::new)
                 .toList();
     }
 
-    // 🔥 오늘 진행률 (너가 추가한 기능)
-    public int getTodayProgress(User user) {
-
-        List<Todo> todos = todoRepository.findAllByUser(user);
-
-        long total = todos.size();
-
-        long completed = todos.stream()
-                .filter(todo -> todo.getStatus().name().equals("COMPLETED"))
-                .count();
-
-        if (total == 0) return 0;
-
-        return (int) ((completed * 100) / total);
-    }
-
-    // 단건 조회
+    // 일정 단건 조회 (권한 검증 포함)
     public TodoResponseDto getTodo(Long todoId, User user) {
         Todo todo = todoRepository.findByIdAndUser(todoId, user)
                 .orElseThrow(() -> new IllegalArgumentException("해당 일정이 없거나 접근 권한이 없습니다."));
         return new TodoResponseDto(todo);
     }
 
-    // 수정
+    // 일정 수정 (권한 검증 포함)
     @Transactional
     public TodoResponseDto updateTodo(Long todoId, User user, TodoUpdateDto requestDto) {
         Todo todo = todoRepository.findByIdAndUser(todoId, user)
@@ -74,11 +60,23 @@ public class TodoService {
         return new TodoResponseDto(todo);
     }
 
-    // 삭제
+
+    // 일정 삭제 (권한 검증 포함)
     @Transactional
     public void deleteTodo(Long todoId, User user) {
         Todo todo = todoRepository.findByIdAndUser(todoId, user)
                 .orElseThrow(() -> new IllegalArgumentException("해당 일정이 없거나 접근 권한이 없습니다."));
         todoRepository.delete(todo);
+    }
+
+    // 완료된 일정 일괄 삭제 (todolist2)
+    @Transactional
+    public int deleteCompletedTodos(User user) {
+        List<TodoResponseDto> todos = getTodos(user);
+        int count = (int) todos.stream()
+                .filter(t -> t.getStatus().name().equals("COMPLETED"))
+                .count();
+        todoRepository.deleteAllByUserAndStatus(user, TodoStatus.COMPLETED);
+        return count;
     }
 }
