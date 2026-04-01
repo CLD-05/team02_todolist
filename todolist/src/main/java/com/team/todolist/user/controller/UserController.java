@@ -21,30 +21,30 @@ public class UserController {
         return "login";
     }
 
-    // 회원가입 페이지
+ // 회원가입 페이지
     @GetMapping("/users/join")
-    public String joinForm() {
+    public String joinForm(Model model) {
+        model.addAttribute("joinRequestDto", new JoinRequestDto());
         return "join";
     }
 
+    // 회원가입 처리
     @PostMapping("/users/join")
     public String join(
-            @Valid @ModelAttribute JoinRequestDto requestDto,
+            @Valid @ModelAttribute("joinRequestDto") JoinRequestDto requestDto,
             BindingResult bindingResult,
             Model model
     ) {
-
-        // 1. 비밀번호 확인 검사
+        // 비밀번호 확인 일치 검사
         if (!requestDto.getPassword().equals(requestDto.getPasswordConfirm())) {
             bindingResult.rejectValue("passwordConfirm", "password.mismatch", "비밀번호가 일치하지 않습니다.");
         }
 
-        // 2. DTO 검증 실패
+        // DTO 검증 실패
         if (bindingResult.hasErrors()) {
             return "join";
         }
 
-        // 3. 서비스 로직
         try {
             userService.join(requestDto);
             return "redirect:/login";
