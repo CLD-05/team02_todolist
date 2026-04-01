@@ -116,5 +116,4 @@ public class TodoController {
         redirectAttributes.addFlashAttribute("successMessage", "할 일이 삭제되었습니다!");
         return "redirect:/todos";
     }
-
 }
