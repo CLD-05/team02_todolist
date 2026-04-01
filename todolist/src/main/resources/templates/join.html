@@ -3,61 +3,142 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>회원가입 - TodoList</title>
+  <title>회원가입 · TodoList</title>
   <link rel="stylesheet" th:href="@{/css/style.css}">
+  <style>
+    .join-wrap { min-height: 100vh; display: flex; }
+    .join-brand {
+      width: 420px; flex-shrink: 0; background: #3D5A80;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 48px 40px;
+      position: relative; overflow: hidden;
+    }
+    .join-brand::before {
+      content: ''; position: absolute; top: -80px; right: -80px;
+      width: 300px; height: 300px; border-radius: 50%;
+      background: rgba(238,108,77,0.15);
+    }
+    .join-brand::after {
+      content: ''; position: absolute; bottom: -60px; left: -60px;
+      width: 240px; height: 240px; border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+    .join-brand-logo {
+      font-family: 'Nunito', sans-serif; font-size: 42px;
+      font-weight: 800; color: #fff; margin-bottom: 16px;
+      position: relative; z-index: 1;
+    }
+    .join-brand-logo span { color: #EE6C4D; }
+    .join-brand-desc {
+      color: rgba(255,255,255,0.75); font-size: 15px; text-align: center;
+      line-height: 1.7; position: relative; z-index: 1; margin-bottom: 40px;
+    }
+    .join-feature-list { list-style: none; width: 100%; position: relative; z-index: 1; }
+    .join-feature-list li {
+      display: flex; align-items: center; gap: 12px;
+      color: rgba(255,255,255,0.85); font-size: 14px;
+      padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+    .join-feature-list li:last-child { border-bottom: none; }
+    .join-feature-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: rgba(238,108,77,0.25); display: flex;
+      align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+    }
+    .join-form-panel {
+      flex: 1; display: flex; align-items: center;
+      justify-content: center; padding: 48px 40px; background: var(--bg);
+    }
+    .join-form-box { width: 100%; max-width: 400px; }
+    .join-form-title {
+      font-family: 'Nunito', sans-serif; font-size: 28px;
+      font-weight: 800; color: var(--text); margin-bottom: 6px;
+    }
+    .join-form-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
+    .join-step { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+    .join-step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+    .join-step-text {
+      font-size: 12px; font-weight: 600; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    @media (max-width: 768px) {
+      .join-wrap { flex-direction: column; }
+      .join-brand { width: 100%; padding: 40px 24px; }
+      .join-feature-list { display: none; }
+      .join-brand-desc { margin-bottom: 0; }
+      .join-form-panel { padding: 36px 24px; }
+    }
+  </style>
 </head>
 <body>
-<div class="page-center">
-  <div class="card">
+<div class="join-wrap">
 
-    <!-- 로고 -->
-    <div class="text-center" style="margin-bottom: 32px;">
-      <div style="font-family:'Nunito',sans-serif; font-size:32px; font-weight:800; color:#3D5A80;">
-        Todo<span style="color:#EE6C4D;">List</span>
-      </div>
-      <p style="color:#7A8A9A; font-size:14px; margin-top:6px;">새 계정을 만들어보세요</p>
-    </div>
-
-    <!-- 에러 메시지 -->
-    <div class="alert alert-error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
-
-    <!-- 회원가입 폼 -->
-    <form th:action="@{/users/join}" method="post">
-
-      <div class="form-group">
-        <label class="form-label" for="email">이메일</label>
-        <input class="form-control"
-               type="email"
-               id="email"
-               name="email"
-               placeholder="example@email.com"
-               required>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label" for="password">비밀번호</label>
-        <input class="form-control"
-               type="password"
-               id="password"
-               name="password"
-               placeholder="비밀번호를 입력하세요"
-               required>
-      </div>
-
-      <!-- CSRF 토큰 -->
-      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-
-      <button type="submit" class="btn btn-primary" style="margin-top:8px;">
-        회원가입
-      </button>
-    </form>
-
-    <p class="text-center mt-24" style="font-size:14px; color:#7A8A9A;">
-      이미 계정이 있으신가요?
-      <a class="link" th:href="@{/login}">로그인</a>
-    </p>
-
+  <!-- 왼쪽 브랜드 패널 -->
+  <div class="join-brand">
+    <div class="join-brand-logo">Todo<span>List</span></div>
+    <p class="join-brand-desc">할 일을 쉽고 빠르게 관리하고<br>매일의 목표를 달성해보세요</p>
+    <ul class="join-feature-list">
+      <li><div class="join-feature-icon">✅</div><span>체크박스로 간편하게 완료 처리</span></li>
+      <li><div class="join-feature-icon">📋</div><span>진행중 / 대기중 / 완료 상태 관리</span></li>
+      <li><div class="join-feature-icon">🗑</div><span>완료된 항목 한번에 정리</span></li>
+      <li><div class="join-feature-icon">🔒</div><span>나만의 개인 Todo 리스트</span></li>
+    </ul>
   </div>
+
+  <!-- 오른쪽 폼 패널 -->
+  <div class="join-form-panel">
+    <div class="join-form-box">
+
+      <div class="join-step">
+        <div class="join-step-dot"></div>
+        <span class="join-step-text">새 계정 만들기</span>
+      </div>
+
+      <h2 class="join-form-title">회원가입</h2>
+      <p class="join-form-sub">정보를 입력하고 시작해보세요</p>
+
+      <div class="alert alert-error" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+      <form th:action="@{/users/join}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+        <div class="form-group">
+          <label class="form-label" for="nickname">닉네임</label>
+          <input class="form-control" type="text" id="nickname" name="nickname"
+                 placeholder="사용할 닉네임을 입력하세요" required autofocus maxlength="20">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">이메일</label>
+          <input class="form-control" type="email" id="email" name="email"
+                 placeholder="example@email.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">비밀번호</label>
+          <input class="form-control" type="password" id="password" name="password"
+                 placeholder="비밀번호를 입력하세요" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="passwordConfirm">비밀번호 확인</label>
+          <input class="form-control" type="password" id="passwordConfirm" name="passwordConfirm"
+                 placeholder="비밀번호를 한 번 더 입력하세요" required>
+        </div>
+
+        <button type="submit" class="btn btn-accent" style="width:100%; margin-top:8px;">
+          가입하기
+        </button>
+      </form>
+
+      <p class="text-center mt-24" style="font-size:14px; color:#7A8A9A;">
+        이미 계정이 있으신가요?
+        <a class="link" th:href="@{/login}">로그인</a>
+      </p>
+
+    </div>
+  </div>
+
 </div>
 </body>
 </html>

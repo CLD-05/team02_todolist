@@ -26,10 +26,15 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 20)
     private String role;
 
+    // 닉네임 필드 추가
+    @Column(nullable = false, length = 20)
+    private String nickname;
+
     @Builder
-    public User(String email, String password, String role) {
+    public User(String email, String password, String role, String nickname) {
         this.email = email;
         this.password = password;
         this.role = role;
+        this.nickname = nickname;
     }
 }

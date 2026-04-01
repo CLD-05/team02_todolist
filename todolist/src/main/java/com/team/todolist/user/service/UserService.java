@@ -1,5 +1,6 @@
 package com.team.todolist.user.service;
 
+import com.team.todolist.todo.repository.TodoRepository;
 import com.team.todolist.user.dto.JoinRequestDto;
 import com.team.todolist.user.entity.User;
 import com.team.todolist.user.repository.UserRepository;
@@ -14,8 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder; // SecurityConfig에서 빈으로 주입
+    private final TodoRepository todoRepository;
+    private final PasswordEncoder passwordEncoder;
 
+    // 회원가입
     @Transactional
     public String join(JoinRequestDto requestDto) {
         if (userRepository.existsByEmail(requestDto.getEmail())) {
@@ -25,10 +28,18 @@ public class UserService {
         User user = User.builder()
                 .email(requestDto.getEmail())
                 .password(passwordEncoder.encode(requestDto.getPassword()))
-                .role("ROLE_USER") // Spring Security 규칙: ROLE_ 접두사 필수
+                .role("ROLE_USER")
+                .nickname(requestDto.getNickname()) // 닉네임 저장
                 .build();
 
         userRepository.save(user);
         return "회원가입 완료";
+    }
+
+    // 회원탈퇴
+    @Transactional
+    public void deleteUser(User user) {
+        todoRepository.deleteAllByUser(user);
+        userRepository.delete(user);
     }
 }
