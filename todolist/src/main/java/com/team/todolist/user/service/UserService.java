@@ -29,18 +29,17 @@ public class UserService {
                 .email(requestDto.getEmail())
                 .password(passwordEncoder.encode(requestDto.getPassword()))
                 .role("ROLE_USER")
+                .nickname(requestDto.getNickname()) // 닉네임 저장
                 .build();
 
         userRepository.save(user);
         return "회원가입 완료";
     }
 
-    // 회원탈퇴 (해당 유저의 Todo 전부 삭제 후 유저 삭제)
+    // 회원탈퇴
     @Transactional
     public void deleteUser(User user) {
-        // 유저의 Todo 먼저 전부 삭제
         todoRepository.deleteAllByUser(user);
-        // 유저 삭제
         userRepository.delete(user);
     }
 }

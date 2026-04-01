@@ -35,18 +35,18 @@ public class TodoService {
                 .toList();
     }
 
-    // 일정 단건 조회
-    public TodoResponseDto getTodo(Long todoId) {
-        Todo todo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
+    // 일정 단건 조회 (권한 검증 포함)
+    public TodoResponseDto getTodo(Long todoId, User user) {
+        Todo todo = todoRepository.findByIdAndUser(todoId, user)
+                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 없거나 접근 권한이 없습니다."));
         return new TodoResponseDto(todo);
     }
 
-    // 일정 수정
+    // 일정 수정 (권한 검증 포함)
     @Transactional
-    public TodoResponseDto updateTodo(Long todoId, TodoUpdateDto requestDto) {
-        Todo todo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
+    public TodoResponseDto updateTodo(Long todoId, User user, TodoUpdateDto requestDto) {
+        Todo todo = todoRepository.findByIdAndUser(todoId, user)
+                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 없거나 접근 권한이 없습니다."));
 
         if (requestDto.getContent() != null) {
             todo.updateContent(requestDto.getContent());
@@ -58,23 +58,21 @@ public class TodoService {
         return new TodoResponseDto(todo);
     }
 
-    // 일정 삭제
+    // 일정 삭제 (권한 검증 포함)
     @Transactional
-    public void deleteTodo(Long todoId) {
-        Todo todo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 존재하지 않습니다."));
+    public void deleteTodo(Long todoId, User user) {
+        Todo todo = todoRepository.findByIdAndUser(todoId, user)
+                .orElseThrow(() -> new IllegalArgumentException("해당 일정이 없거나 접근 권한이 없습니다."));
         todoRepository.delete(todo);
     }
 
-    // 완료된 일정 일괄 삭제
+    // 완료된 일정 일괄 삭제 (todolist2)
     @Transactional
     public int deleteCompletedTodos(User user) {
-        // 삭제 전 완료 개수 먼저 조회
         List<TodoResponseDto> todos = getTodos(user);
         int count = (int) todos.stream()
                 .filter(t -> t.getStatus().name().equals("COMPLETED"))
                 .count();
-
         todoRepository.deleteAllByUserAndStatus(user, TodoStatus.COMPLETED);
         return count;
     }

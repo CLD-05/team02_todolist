@@ -6,7 +6,6 @@ import com.team.todolist.user.entity.User;
 import com.team.todolist.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,7 +34,32 @@ public class UserController {
 
     // 회원가입 처리
     @PostMapping("/users/join")
-    public String join(@Valid @ModelAttribute JoinRequestDto requestDto, Model model) {
+    public String join(@ModelAttribute JoinRequestDto requestDto, Model model) {
+
+        // 이메일 빈값 검사
+        if (requestDto.getEmail() == null || requestDto.getEmail().isBlank()) {
+            model.addAttribute("errorMessage", "이메일은 필수입니다.");
+            return "join";
+        }
+
+        // 비밀번호 빈값 검사
+        if (requestDto.getPassword() == null || requestDto.getPassword().isBlank()) {
+            model.addAttribute("errorMessage", "비밀번호는 필수입니다.");
+            return "join";
+        }
+
+        // 비밀번호 확인 검사
+        if (!requestDto.getPassword().equals(requestDto.getPasswordConfirm())) {
+            model.addAttribute("errorMessage", "비밀번호가 일치하지 않습니다.");
+            return "join";
+        }
+
+        // 닉네임 빈값 검사
+        if (requestDto.getNickname() == null || requestDto.getNickname().isBlank()) {
+            model.addAttribute("errorMessage", "닉네임은 필수입니다.");
+            return "join";
+        }
+
         try {
             userService.join(requestDto);
             return "redirect:/login?joined";
@@ -53,14 +77,9 @@ public class UserController {
             HttpServletResponse response
     ) {
         User user = userDetails.getUser();
-
-        // 회원탈퇴 처리
         userService.deleteUser(user);
-
-        // 세션 무효화 (로그아웃 처리)
         new SecurityContextLogoutHandler()
                 .logout(request, response, SecurityContextHolder.getContext().getAuthentication());
-
         return "redirect:/login?deleted";
     }
 }
