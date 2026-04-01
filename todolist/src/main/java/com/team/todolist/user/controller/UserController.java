@@ -6,12 +6,14 @@ import com.team.todolist.user.entity.User;
 import com.team.todolist.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -28,35 +30,25 @@ public class UserController {
 
     // 회원가입 페이지
     @GetMapping("/users/join")
-    public String joinForm() {
+    public String joinForm(Model model) {
+        model.addAttribute("joinRequestDto", new JoinRequestDto());
         return "join";
     }
 
     // 회원가입 처리
     @PostMapping("/users/join")
-    public String join(@ModelAttribute JoinRequestDto requestDto, Model model) {
-
-        // 이메일 빈값 검사
-        if (requestDto.getEmail() == null || requestDto.getEmail().isBlank()) {
-            model.addAttribute("errorMessage", "이메일은 필수입니다.");
-            return "join";
-        }
-
-        // 비밀번호 빈값 검사
-        if (requestDto.getPassword() == null || requestDto.getPassword().isBlank()) {
-            model.addAttribute("errorMessage", "비밀번호는 필수입니다.");
-            return "join";
-        }
-
+    public String join(
+            @Valid @ModelAttribute("joinRequestDto") JoinRequestDto requestDto,
+            BindingResult bindingResult,
+            Model model
+    ) {
         // 비밀번호 확인 검사
         if (!requestDto.getPassword().equals(requestDto.getPasswordConfirm())) {
-            model.addAttribute("errorMessage", "비밀번호가 일치하지 않습니다.");
-            return "join";
+            bindingResult.rejectValue("passwordConfirm", "password.mismatch", "비밀번호가 일치하지 않습니다.");
         }
 
-        // 닉네임 빈값 검사
-        if (requestDto.getNickname() == null || requestDto.getNickname().isBlank()) {
-            model.addAttribute("errorMessage", "닉네임은 필수입니다.");
+        // DTO 검증 실패
+        if (bindingResult.hasErrors()) {
             return "join";
         }
 
