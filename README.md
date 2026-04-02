@@ -1,6 +1,6 @@
 # team02_todolist
 
-Todolist 
+Todolist   
 Spring Boot 기반의 TodoList 애플리케이션   
 Docker와 VM 환경을 활용하여 Build 방식으로 배포를 수행   
 클라우드 아키텍처 설계 및 기획   
@@ -36,7 +36,7 @@ Spring Boot + MySQL 컨테이너 실행
 Java 17  
 Docker   
 Docker Compose  
-Git  
+Git    
 
 <실행>
 1. 프로젝트 클론 
