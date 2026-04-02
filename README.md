@@ -32,11 +32,11 @@ Spring Boot + MySQL 컨테이너 실행
    ↓  
 서비스 배포 완료  
 
-<Prerequistites>    
+<사전 설정>  
 Java 17  
-Docker   
-Docker Compose  
-Git    
+Docker  
+Docker compose  
+Git  
 
 <실행>
 1. 프로젝트 클론 
