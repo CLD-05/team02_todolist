@@ -32,7 +32,7 @@ Spring Boot + MySQL 컨테이너 실행
    ↓  
 서비스 배포 완료  
 
-<Prerequistites>  
+<Prerequistites>    
 Java 17  
 Docker   
 Docker Compose  
