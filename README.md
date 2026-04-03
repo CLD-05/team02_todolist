@@ -34,6 +34,7 @@ Spring Boot + MySQL 컨테이너 실행
 
 <사전 설정>  
 Java 17  
+maven  
 Docker  
 Docker compose  
 Git  
