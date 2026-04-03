@@ -43,7 +43,7 @@ Git
 git clone 
 cd team02_todolist/todolist
 2. maven 빌드  
-mvn clean package
+mvn clean package -DskipTests  
 3. Docker 실행(build)  
 docker-compose up -d -build
 4. 실행 확인  
