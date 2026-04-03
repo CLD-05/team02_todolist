@@ -49,4 +49,4 @@ docker-compose up -d -build
 4. 실행 확인  
 docker ps
 5. 서비스 접속  
-http://localhost:
+http://localhost:8080
