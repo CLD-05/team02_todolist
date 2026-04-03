@@ -39,14 +39,14 @@ Docker compose
 Git  
 
 <실행>
-1. 프로젝트 클론 
+1. 프로젝트 클론   
 git clone 
 cd team02_todolist/todolist
-2. maven 빌드
+2. maven 빌드  
 mvn clean package
-3. Docker 실행(build)
+3. Docker 실행(build)  
 docker-compose up -d -build
-4. 실행 확인
+4. 실행 확인  
 docker ps
-5. 서비스 접속
+5. 서비스 접속  
 http://localhost:
