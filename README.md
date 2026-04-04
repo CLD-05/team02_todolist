@@ -41,7 +41,7 @@ Git
 
 <실행>
 1. 프로젝트 클론   
-git clone   
+git clone https://github.com/CLD-05/team02_todolist.git  
 cd team02_todolist/todolist
 2. maven 빌드  
 mvn clean package -DskipTests  
