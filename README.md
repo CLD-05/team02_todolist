@@ -43,11 +43,48 @@ Git
 1. 프로젝트 클론   
 git clone https://github.com/CLD-05/team02_todolist.git  
 cd team02_todolist/todolist
-2. maven 빌드  
-mvn clean package -DskipTests  
-3. Docker 실행(build)  
+
+2. 환경변수 설정
+cat > .env << 'EOF'
+MYSQL_ROOT_PASSWORD=root1234
+MYSQL_DATABASE=todo_app
+MYSQL_USER=todo
+MYSQL_PASSWORD=todo1234
+
+SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/todo_app?serverTimezone=Asia/Seoul
+SPRING_DATASOURCE_USERNAME=todo
+SPRING_DATASOURCE_PASSWORD=todo1234
+EOF
+
+3.application.properties 설정
+cat > src/main/resources/application.properties << 'EOF'
+# DB 설정 
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.datasource.url=${SPRING_DATASOURCE_URL}
+spring.datasource.username=${SPRING_DATASOURCE_USERNAME}
+spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}
+
+# JPA
+spring.jpa.generate-ddl=true
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.show-sql=true
+
+# Thymeleaf
+spring.thymeleaf.prefix=classpath:/templates/
+spring.thymeleaf.suffix=.html
+spring.thymeleaf.cache=false
+spring.thymeleaf.check-template-location=true
+EOF
+   
+4. maven 빌드  
+mvn clean package -DskipTests
+
+6. Docker 실행(build)  
 docker-compose up -d -build
-4. 실행 확인  
+
+7. 실행 확인  
 docker ps
-5. 서비스 접속  
+
+8. 서비스 접속  
 http://localhost:8080
