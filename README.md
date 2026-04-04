@@ -45,6 +45,7 @@ git clone https://github.com/CLD-05/team02_todolist.git
 cd team02_todolist/todolist
 
 2. 환경변수 설정
+```
 cat > .env << 'EOF'
 MYSQL_ROOT_PASSWORD=root1234
 MYSQL_DATABASE=todo_app
@@ -55,8 +56,10 @@ SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/todo_app?serverTimezone=Asia/Seoul
 SPRING_DATASOURCE_USERNAME=todo
 SPRING_DATASOURCE_PASSWORD=todo1234
 EOF
+```
 
 3.application.properties 설정
+```
 cat > src/main/resources/application.properties << 'EOF'
 # DB 설정 
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
@@ -76,12 +79,13 @@ spring.thymeleaf.suffix=.html
 spring.thymeleaf.cache=false
 spring.thymeleaf.check-template-location=true
 EOF
+```
    
 4. maven 빌드  
 mvn clean package -DskipTests
 
 6. Docker 실행(build)  
-docker-compose up -d -build
+docker-compose up -d --build
 
 7. 실행 확인  
 docker ps
